@@ -6,7 +6,7 @@ export default struct BoardItem {
 
   build() {
     RelativeContainer() {
-      if (this.num != GameNum._0) {
+      if (this.num !== GameNum._0) {
         Text(this.num.toString())
           .fontColor(this.textColor())
           .fontSize(14)
@@ -52,6 +52,8 @@ export default struct BoardItem {
         return $r('app.color.color_1024')
       case GameNum._2048:
         return $r('app.color.color_2048')
+      default:
+        return $r('app.color.color_empty')
     }
   }
 }

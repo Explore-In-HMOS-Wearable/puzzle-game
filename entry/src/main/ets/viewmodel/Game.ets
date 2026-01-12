@@ -1,5 +1,6 @@
 import { GameNum } from '../model/GameNum';
 import { GameStatus } from '../model/GameStatus';
+import { cryptoFramework } from '@kit.CryptoArchitectureKit';
 
 @Observed
 export default class Game {
@@ -22,12 +23,12 @@ export default class Game {
 
   private _checkGame() {
     // check if win
-    if (this.board.some((val) => val == GameNum._2048)) {
+    if (this.board.some((val) => val === GameNum._2048)) {
       this.status = GameStatus.win;
     }
 
     // check if the board is full and no move exists
-    if (this.board.every((val) => val != 0) && !this._moveExists()) {
+    if (this.board.every((val) => val !== 0) && !this._moveExists()) {
       this.status = GameStatus.lose
     }
     // else game can continue
@@ -35,7 +36,7 @@ export default class Game {
 
   private _moveExists() {
     // reshape flat list as board
-    let board2D: number[][] = [];
+    const board2D: number[][] = [];
     for (let i = 0; i < this.board.length; i += 4) {
       board2D.push(this.board.slice(i, i + 4));
     }
@@ -43,13 +44,13 @@ export default class Game {
     // check each row and column
     for (let row = 0; row < board2D.length; row++) {
       for (let col = 0; col < board2D[row].length - 1; col++) {
-        if (board2D[row][col] == board2D[row][col + 1]) {
+        if (board2D[row][col] === board2D[row][col + 1]) {
           return true;
         }
 
         // if not last row, compare with next row
         if (row < board2D.length - 1) {
-          if (board2D[row][col] == board2D[row + 1][col]) {
+          if (board2D[row][col] === board2D[row + 1][col]) {
             return true
           }
         }
@@ -60,12 +61,25 @@ export default class Game {
     return false
   }
 
+  private getRandomValue(): number {
+    try {
+      const random = cryptoFramework.createRandom();
+      const randomBytes = random.generateRandomSync(4);
+      const view = new DataView(randomBytes.data.buffer);
+      const randomUint32 = view.getUint32(0, false);
+      return randomUint32 / 4294967296;
+    } catch (error) {
+      console.error('Random generation error:', error);
+      return 1
+    }
+  }
+
   private _getRandomIndex(max: number = 15) {
-    return Math.round(Math.random() * max);
+    return Math.round(this.getRandomValue() * max);
   }
 
   private _addItem(arr: number[]) {
-    const emptyIndexes = arr.map((value, index) => value == 0 ? index : -1).filter((val) => val >= 0)
+    const emptyIndexes = arr.map((value, index) => value === 0 ? index : -1).filter((val) => val >= 0)
     const index = emptyIndexes[this._getRandomIndex(emptyIndexes.length - 1)]
 
     const arrCopy = Array.from(arr);
@@ -74,7 +88,7 @@ export default class Game {
   }
 
   private _isEmpty(line: number[]) {
-    return line.every((value) => value == 0)
+    return line.every((value) => value === 0)
   }
 
   private _swipeAndMerge(line: number[]) {
@@ -84,7 +98,7 @@ export default class Game {
     }
 
     // first clear zeros
-    const noZeros = line.filter((value) => value != 0)
+    const noZeros = line.filter((value) => value !== 0)
 
     // if two near elements are same, if three are same first two should merge
     // 2,2 -> 4
@@ -92,9 +106,9 @@ export default class Game {
     const newLine: number[] = []
     for (let i = 0; i < noZeros.length; i++) {
       // if last element, push to new newLine
-      if (i == noZeros.length - 1) {
+      if (i === noZeros.length - 1) {
         newLine.push(noZeros[i])
-      } else if (noZeros[i] == noZeros[i + 1]) { // check if two elements should merge
+      } else if (noZeros[i] === noZeros[i + 1]) { // check if two elements should merge
         newLine.push(noZeros[i] * 2)
         i++;
       } else { // no merge, push element
@@ -111,7 +125,7 @@ export default class Game {
   }
 
   private _boardChanged(newBoard: number[]) {
-    return !this.board.every((val, index) => val == newBoard[index])
+    return !this.board.every((val, index) => val === newBoard[index])
   }
 
   private _rotateRight90(matrix: number[][]) {
@@ -128,12 +142,12 @@ export default class Game {
   }
 
   swipeLeft() {
-    if (this.status != GameStatus.running) {
+    if (this.status !== GameStatus.running) {
       return
     }
 
     // reshape flat list as board
-    let board2D: number[][] = [];
+    const board2D: number[][] = [];
     for (let i = 0; i < this.board.length; i += 4) {
       board2D.push(this.board.slice(i, i + 4));
     }
@@ -156,7 +170,7 @@ export default class Game {
   }
 
   swipeRight() {
-    if (this.status != GameStatus.running) {
+    if (this.status !== GameStatus.running) {
       return
     }
 
@@ -190,7 +204,7 @@ export default class Game {
   }
 
   swipeUp() {
-    if (this.status != GameStatus.running) {
+    if (this.status !== GameStatus.running) {
       return
     }
 
@@ -224,7 +238,7 @@ export default class Game {
   }
 
   swipeDown() {
-    if (this.status != GameStatus.running) {
+    if (this.status !== GameStatus.running) {
       return
     }
 

@@ -1,6 +1,6 @@
 {
   "app": {
-    "bundleName": "com.hmosdemos.puzzle_game",
+    "bundleName": "com.hmosdemos.wearable.puzzle_game",
     "vendor": "hmosdemos",
     "versionCode": 1000000,
     "versionName": "1.0.0",

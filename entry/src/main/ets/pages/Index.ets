@@ -10,7 +10,7 @@ struct Index {
   @State pop: boolean = false;
 
   winLose() {
-    this.pop = this.game.status != GameStatus.running
+    this.pop = this.game.status !== GameStatus.running
   }
 
   build() {
@@ -20,7 +20,7 @@ struct Index {
           GridItem() {
             BoardItem({ num: num })
           }
-        }, (item: number, index: number) => `${index} | ${item}`)
+        }, (item: number, index: number) => `${item}`)
       }
       .size({ width: '70%', height: '70%' })
       .alignRules({
@@ -46,22 +46,18 @@ struct Index {
         // vertical movement
         if (verticalDistance < 0) {
           // swipe up
-          console.log('up');
           this.game.swipeUp()
         } else {
           // swipe down
-          console.log('down')
           this.game.swipeDown()
         }
       } else {
         // horizontal movement
         if (horizontalDistance < 0) {
           // swipe left
-          console.log('left')
           this.game.swipeLeft()
         } else {
           // swipe right
-          console.log('right')
           this.game.swipeRight()
         }
       }
@@ -74,7 +70,7 @@ struct Index {
         if (!e.isVisible) {
           this.game.refresh()
         }
-      },
+      }
     })
   }
 
@@ -86,6 +82,8 @@ struct Index {
         return Color.Red
       case GameStatus.win:
         return Color.Green
+      default:
+        return $r('app.color.color_background')
     }
   }
 
@@ -93,7 +91,7 @@ struct Index {
   winLosePopupBuilder() {
     WinLosePopup({
       showPopup: this.pop,
-      win: this.game.status == GameStatus.win
+      win: this.game.status === GameStatus.win
     })
   }
 }
